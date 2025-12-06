@@ -486,11 +486,29 @@
         }
 
         function addPhotoToScene(texture) {
-            const frameGeo = new THREE.BoxGeometry(1.4, 1.4, 0.05);
+            // Calculate aspect ratio
+            const img = texture.image;
+            let width = 1.2;
+            let height = 1.2;
+            
+            if (img) {
+                const aspect = img.width / img.height;
+                if (aspect >= 1) {
+                    // Landscape or Square
+                    width = 1.2;
+                    height = 1.2 / aspect;
+                } else {
+                    // Portrait
+                    height = 1.2;
+                    width = 1.2 * aspect;
+                }
+            }
+
+            const frameGeo = new THREE.BoxGeometry(width + 0.2, height + 0.2, 0.05);
             const frameMat = new THREE.MeshStandardMaterial({ color: CONFIG.colors.champagneGold, metalness: 1.0, roughness: 0.1 });
             const frame = new THREE.Mesh(frameGeo, frameMat);
 
-            const photoGeo = new THREE.PlaneGeometry(1.2, 1.2);
+            const photoGeo = new THREE.PlaneGeometry(width, height);
             const photoMat = new THREE.MeshBasicMaterial({ map: texture });
             const photo = new THREE.Mesh(photoGeo, photoMat);
             photo.position.z = 0.04;
